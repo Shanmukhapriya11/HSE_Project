@@ -8,7 +8,7 @@ This local Streamlit application is a compact interview demonstration for explor
 
 The application has exactly three pages:
 
-1. **Operational HSE Overview** — KPI cards, four specified charts and a programmatically derived pattern signal over 104 reproducible synthetic reports.
+1. **Operational HSE Overview** — KPI cards, four specified charts and a programmatically derived pattern signal over 104 synthetic reports. A refresh control generates a new reproducible demo scenario.
 2. **Hazard & Near-Miss Assessment** — keyword-assisted category suggestion with user override, validated 1–5 inputs, a highlighted 5×5 risk matrix, potential hierarchy-of-controls recommendations and suggested CAPA items.
 3. **Environmental Sustainability & Data Exploration** — January–August synthetic indicators, transparent anomaly checks and a two-component PCA of report features.
 
@@ -44,7 +44,7 @@ Calculated values are visually separated from potential controls and CAPA recomm
 
 ## Limitations
 
-- All records are synthetic and generated with fixed seed 42.
+- All records are synthetic. Each refresh uses a deterministic seed derived from base seed 42, so a scenario remains internally consistent while refreshed scenarios produce different values.
 - The keyword classifier understands only listed words and not full context, negation or nuanced hazards.
 - Risk bands simplify site-specific risk methodologies.
 - The days-without-LTI KPI is a clearly labelled proxy because the demo data has no separate lost-time field.

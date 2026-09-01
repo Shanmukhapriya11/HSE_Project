@@ -44,10 +44,10 @@ def action_priority(level: str) -> str:
     }[level]
 
 
-@st.cache_data
-def make_hse_data(n: int = 104) -> pd.DataFrame:
+@st.cache_data(max_entries=20)
+def make_hse_data(seed: int = SEED, n: int = 104) -> pd.DataFrame:
     """Create stable, synthetic HSE reports for demonstration only."""
-    rng = np.random.default_rng(SEED)
+    rng = np.random.default_rng(seed)
     dates = pd.to_datetime("2025-01-01") + pd.to_timedelta(rng.integers(0, 243, n), unit="D")
     likelihood = rng.choice([1, 2, 3, 4, 5], n, p=[0.12, 0.25, 0.31, 0.22, 0.10])
     severity = rng.choice([1, 2, 3, 4, 5], n, p=[0.10, 0.25, 0.30, 0.24, 0.11])
@@ -74,10 +74,10 @@ def make_hse_data(n: int = 104) -> pd.DataFrame:
     return df.sort_values("date").reset_index(drop=True)
 
 
-@st.cache_data
-def make_environmental_data() -> pd.DataFrame:
+@st.cache_data(max_entries=20)
+def make_environmental_data(seed: int = SEED + 1) -> pd.DataFrame:
     """Create stable monthly synthetic sustainability indicators."""
-    rng = np.random.default_rng(SEED + 1)
+    rng = np.random.default_rng(seed)
     months = pd.date_range("2025-01-01", periods=8, freq="MS")
     data = pd.DataFrame(
         {
@@ -147,9 +147,13 @@ def style_app() -> None:
     st.markdown(
         """
         <style>
-        html, body, [class*="st-"], [data-testid="stAppViewContainer"] {
+        html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {
             font-family: "Times New Roman", Times, serif;
         }
+        .material-symbols-rounded, .material-symbols-outlined {
+            font-family: "Material Symbols Rounded" !important;
+        }
+        [data-testid="stSidebarCollapseButton"] {display: none !important;}
         h1, h2, h3 {color: #203B37; letter-spacing: .01em;}
         [data-testid="stMetric"] {
             background:#EEE8B2; border:1px solid #96CDB0; padding:14px;
@@ -259,9 +263,9 @@ def assessment_page() -> None:
         st.markdown(f"**{heading}:** {item}")
 
 
-def sustainability_page(df: pd.DataFrame) -> None:
+def sustainability_page(df: pd.DataFrame, scenario_seed: int) -> None:
     header("Environmental Sustainability and Data Exploration", "Monthly indicators and exploratory PCA")
-    env = make_environmental_data()
+    env = make_environmental_data(seed=scenario_seed + 1)
     latest = env.iloc[-1]
     metrics = [col for col in env.columns if col != "month"]
     cols = st.columns(5)
@@ -304,16 +308,20 @@ def sustainability_page(df: pd.DataFrame) -> None:
 
 
 style_app()
-df_reports = make_hse_data()
+st.session_state.setdefault("demo_version", 0)
 st.sidebar.title("HSE Risk Intelligence")
 st.sidebar.caption("Analytics & Decision-Support Prototype")
 page = st.sidebar.radio("Navigate", ["Operational HSE Overview", "Hazard & Near-Miss Assessment", "Environmental Sustainability & Data Exploration"])
-st.sidebar.markdown("---")
-st.sidebar.caption("Synthetic Demo Data · Fixed seed 42")
+if st.sidebar.button("Refresh synthetic data", icon=":material/refresh:", width="stretch"):
+    st.session_state.demo_version += 1
+scenario_seed = SEED + st.session_state.demo_version
+df_reports = make_hse_data(seed=scenario_seed)
+st.sidebar.caption(f"Synthetic Demo Data · Scenario {st.session_state.demo_version + 1}")
+st.sidebar.caption("Refresh creates a new reproducible synthetic scenario; it is not live facility data.")
 
 if page == "Operational HSE Overview":
     operational_overview(df_reports)
 elif page == "Hazard & Near-Miss Assessment":
     assessment_page()
 else:
-    sustainability_page(df_reports)
+    sustainability_page(df_reports, scenario_seed)
