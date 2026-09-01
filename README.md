@@ -62,6 +62,10 @@ streamlit run app.py
 
 Streamlit prints a local address, normally `http://localhost:8501`, which opens the application in a browser.
 
+## Vercel deployment
+
+`Dockerfile.vercel` packages the Streamlit server for Vercel's container runtime. Vercel supplies the listening port through `PORT`; the container command binds Streamlit to that port and to all interfaces. Local use remains unchanged.
+
 ## Possible production extensions
 
 Subject to governance and validation: controlled data ingestion, role-based access, audit trails, site-specific risk matrices, workflow integration, data-quality checks, validated model monitoring and formal HSE approval gates. These are intentionally outside this prototype.

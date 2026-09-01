@@ -45,6 +45,10 @@ python -m streamlit run app.py
 
 The application normally opens at `http://localhost:8501`.
 
+## Vercel deployment
+
+`Dockerfile.vercel` packages this standalone Streamlit server for Vercel's container runtime. Deploy this folder as its own Vercel project. Local installation and execution remain unchanged.
+
 ## Production direction and evaluation
 
 A governed production system could use retrieval-augmented generation over licensed standards, an approved legal register, and controlled internal procedures. Each retrieved passage would need provenance, access control, versioning and expert validation. Evaluation should measure observation-extraction precision/recall, category and finding-type accuracy, evidence-attribution accuracy, unsupported-claim rate, risk-review agreement, and reviewer acceptance/override rates. Releases would require validation, monitoring, audit trails and formal HSE approval.
